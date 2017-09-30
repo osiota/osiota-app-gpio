@@ -1,0 +1,11 @@
+{
+  "name": "er-app-gpio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "rpi-gpio-mod": "^0.7.0"
+  },
+  "devDependencies": {},
+  "author": ""
+}
