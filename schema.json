@@ -1,0 +1,34 @@
+{
+	"type": "object",
+	"title": "Settings",
+	"properties": {
+		"pin": {
+			"type": "number",
+			"title": "GPIO pin number"
+		},
+		"invert": {
+			"type": "boolean",
+			"title": "Invert value (e.g. for a pull down circuit)"
+		},
+		"action": {
+			"type": "array",
+			"format": "table",
+			"title": "Actions",
+			"items": {
+				"type": "object",
+				"title": "Action",
+				"properties": {
+					"type": {
+						"type": "string",
+						"enum": ["press", "longpress"]
+					},
+					"node": {
+						"type": "string"
+					}
+				},
+				"required": ["type", "node"]
+			}
+		}
+	},
+	"additionalProperties": false
+}
