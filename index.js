@@ -8,21 +8,49 @@ types.switch = function(node, value, initial) {
 types.press = function(node, value, initial, delta_min, delta_max) {
 	if (typeof delta_min !== "number") delta_min = 5;
 	if (typeof delta_max !== "number") delta_max = 800;
-	console.log("press" + delta_max, value, initial);
-	if (!initial) {
-		// falling edge:
-		if (!value) {
-			var delta = new Date()*1 - node.state_time;
-			console.log("delta", delta, node.value);
-			if (delta > delta_min && delta <= delta_max) {
-				var v = 1;
-				if (node.value) v = 0;
-				console.log("pressed", v);
-				node.publish(undefined, v);
-			}
-		} else {
-			node.state_time = new Date()*1;
-		}
+	if (initial) {
+		return;
+	}
+	// calculate delta to last event:
+	var delta = new Date()*1 - node.state_time;
+	console.log("delta", delta, node.value, value);
+	// remove spices:
+	//if (delta < min_spice) return;
+
+	// debouncing:
+	// state == on
+	if (this.state === 1) {
+		// (off->on) delta < delta_min => ignore
+		if (delta < delta_min)
+			return;
+
+		// ignore raising edge, as already in state on:
+		if (value) return;
+
+		// set state on falling edge:
+		this.state = 0;
+		node.state_time = new Date()*1;
+
+	// state == off
+	} else {
+		// (on->off) delta < delta_min => ignore
+		if (delta < delta_min)
+			return;
+
+		// ignore falling edge, as already in state off:
+		if (!value) return;
+
+		// set state on raising edge.
+		this.state = 1;
+		node.state_time = new Date()*1;
+	}
+
+	if (this.state === 0 && delta <= delta_max) {
+		// todo: toggle:
+		var v = 1;
+		if (node.value) v = 0;
+		console.log("pressed", v);
+		node.publish(undefined, v);
 	}
 };
 types.longpress_time = function(node, value, initial) {
@@ -30,26 +58,35 @@ types.longpress_time = function(node, value, initial) {
 };
 types.longpress = function(node, value, initial, delta_min, delta_max) {
 	if (typeof delta_min !== "number") delta_min = 1000;
-	if (!initial) {
-		if (node.longpress_t) {
-			clearTimeout(node.longpress_t);
-			node.longpress_t = null;
-		}
-		// raising edge:
-		if (value) {
-			node.longpress_t = setTimeout(function() {
-				node.longpress_t = null;
 
-				var v = 1;
-				if (node.value) v = 0;
-				console.log("pressed", v);
-				node.publish(undefined, v);
-			}, delta_min);
-		}
+	if (initial) {
+		return;
+	}
+
+	if (node.longpress_t) {
+		clearTimeout(node.longpress_t);
+		node.longpress_t = null;
+	}
+	// raising edge:
+	if (value) {
+		node.longpress_t = setTimeout(function() {
+			node.longpress_t = null;
+
+			var v = 1;
+			if (node.value) v = 0;
+			console.log("long pressed", v);
+			node.publish(undefined, v);
+		}, delta_min);
+	}
+	// falling edge:
+	else {
+
 	}
 };
 
 exports.init = function(node, app_config, main, host_info) {
+	var _this = this;
+
 	var pin = 7;
 	if (typeof app_config.pin === "number")
 		pin = app_config.pin;
@@ -68,16 +105,21 @@ exports.init = function(node, app_config, main, host_info) {
 		invert = true;
 	}
 
+	// todo: map:
 	var set = function(value, initial) {
 		action.forEach(function(a) {
 			if (typeof types[a.type] !== "function")
 				throw new Error("type not found: " + a.type);
-			var cb = types[a.type];
+			var cb = types[a.type].bind(_this);
 			var n = node;
 			if (a.node) {
 				n = a.node;
 			}
-			
+			// TODO:
+			if (typeof n === "string") {
+				n = node.node(n);
+			}
+
 			cb(n, value ^ invert, initial);
 		});
 	};
@@ -92,7 +134,7 @@ exports.init = function(node, app_config, main, host_info) {
 		if (error)
 			return console.warn("Setup Error: ", error);
 
-		gpio.read(13, function(error, value) {
+		gpio.read(pin, function(error, value) {
 			if (error)
 				return console.warn("Read Error: ", error);
 			set(value, 1);
