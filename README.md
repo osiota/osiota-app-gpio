@@ -20,9 +20,9 @@ This application reads input states of GPIO pins.
 
 |Name|Description|Type|
 |----|-----------|----|
-|pin|Not GPIO number ([See pin naming](https://www.npmjs.com/package/rpi-gpio#pin-naming))<br/>|number|
-|invert|e.g. for a pull down circuit<br/>|boolean|
-|[map](#map)|Actions<br/><br/>Format: `"table"`|object\[\]|
+|`pin` (Pin number)|Not GPIO number ([See pin naming](https://www.npmjs.com/package/rpi-gpio#pin-naming))<br/>|number|
+|`invert` (Invert Input Value)|e.g. for a pull down circuit<br/>|boolean|
+|[`map`](#map) (Actions)||object\[\]|
 
 **Additional Properties:** `false`<br/>
 **Example**
@@ -53,8 +53,8 @@ This application reads input states of GPIO pins.
 
 |Name|Description|Type|
 |----|-----------|----|
-|type|Switch Type<br/><br/>Enum: `["switch","press","longpress"]`|string|
-|node|Node Name<br/>|string|
+|`type` (Switch Type)|Enum: `["switch","press","longpress"]`<br/>|string|
+|`node` (Node Name)||string|
 
 **Item Required Properties:** type,node<br/>
 **Example**
