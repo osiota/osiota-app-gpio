@@ -1,11 +1,21 @@
 {
-  "name": "er-app-gpio",
+  "name": "osiota-app-gpio",
   "version": "1.0.0",
-  "description": "",
+  "description": "This application reads input states of GPIO pins",
   "main": "index.js",
   "dependencies": {
     "rpi-gpio-mod": "^0.7.0"
   },
-  "devDependencies": {},
-  "author": ""
+  "devDependencies": {
+    "osiota-dev": "^1.x"
+  },
+  "author": "Simon Walz and others",
+  "license": "MIT",
+  "scripts": {
+    "doc": "osiota-dev-doc-jsonschema --schema schema.json --app $npm_package_name"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/osiota/osiota-app-gpio.git"
+  }
 }

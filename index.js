@@ -104,10 +104,7 @@ exports.init = function(node, app_config, main, host_info) {
 	if (!Array.isArray(action)) {
 		throw new Error("action is not array.");
 	}
-	var invert = false;
-	if (typeof app_config.invert) {
-		invert = true;
-	}
+	var invert = !!app_config.invert;
 
 	node.announce([{
 		"type": "gpio.input.app",

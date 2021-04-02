@@ -1,15 +1,23 @@
 {
 	"type": "object",
-	"title": "osiota application GPIO",
+	"title": "osiota application gpio",
+	"description": "This application reads input states of GPIO pins.",
 	"properties": {
 		"pin": {
 			"type": "number",
-			"title": "GPIO pin number"
+			"title": "Pin number",
+			"description": "Not GPIO number ([See pin naming](https://www.npmjs.com/package/rpi-gpio#pin-naming))",
+			"examples": [
+				7
+			]
 		},
 		"invert": {
 			"type": "boolean",
-			"title": "Invert value",
-			"description": "e.g. for a pull down circuit"
+			"title": "Invert Input Value",
+			"description": "e.g. for a pull down circuit",
+			"examples": [
+				true
+			]
 		},
 		"map": {
 			"type": "array",
@@ -21,14 +29,35 @@
 				"properties": {
 					"type": {
 						"type": "string",
-						"enum": ["switch", "press", "longpress"]
+						"title": "Switch Type",
+						"enum": [
+							"switch",
+							"press",
+							"longpress"
+						]
 					},
 					"node": {
+						"title": "Node Name",
 						"type": "string"
 					}
 				},
-				"required": ["type", "node"]
-			}
+				"required": [
+					"type",
+					"node"
+				]
+			},
+			"examples": [
+				[
+					{
+						"type": "press",
+						"node": "/my-switch"
+					},
+					{
+						"type": "longpress",
+						"node": "/my-switch-long"
+					}
+				]
+			]
 		}
 	},
 	"additionalProperties": false
