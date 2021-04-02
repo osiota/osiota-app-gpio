@@ -1,6 +1,6 @@
 {
   "name": "osiota-app-gpio",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "This application reads input states of GPIO pins",
   "main": "index.js",
   "dependencies": {
