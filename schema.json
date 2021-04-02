@@ -1,6 +1,6 @@
 {
 	"type": "object",
-	"title": "Settings",
+	"title": "osiota application GPIO",
 	"properties": {
 		"pin": {
 			"type": "number",
@@ -8,9 +8,10 @@
 		},
 		"invert": {
 			"type": "boolean",
-			"title": "Invert value (e.g. for a pull down circuit)"
+			"title": "Invert value",
+			"description": "e.g. for a pull down circuit"
 		},
-		"action": {
+		"map": {
 			"type": "array",
 			"format": "table",
 			"title": "Actions",
@@ -20,7 +21,7 @@
 				"properties": {
 					"type": {
 						"type": "string",
-						"enum": ["press", "longpress"]
+						"enum": ["switch", "press", "longpress"]
 					},
 					"node": {
 						"type": "string"

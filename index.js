@@ -1,13 +1,14 @@
-//var gpio = require('rpi-gpio-mod');
 var gpio = require('rpi-gpio-mod');
 
 var types = {};
-types.switch = function(node, value, initial) {
+types.switch = function(node, value, initial, config) {
 	node.publish(undefined, value);
 };
-types.press = function(node, value, initial, delta_min, delta_max) {
-	if (typeof delta_min !== "number") delta_min = 5;
-	if (typeof delta_max !== "number") delta_max = 800;
+types.press = function(node, value, initial, config) {
+	var delta_min = 5;
+	var delta_max = 800;
+	if (typeof config.delta_min === "number") delta_min = config.delta_min;
+	if (typeof config.delta_max === "number") delta_max = config.delta_max;
 	if (initial) {
 		return;
 	}
@@ -19,7 +20,7 @@ types.press = function(node, value, initial, delta_min, delta_max) {
 
 	// debouncing:
 	// state == on
-	if (this.state === 1) {
+	if (node.state === 1) {
 		// (off->on) delta < delta_min => ignore
 		if (delta < delta_min)
 			return;
@@ -28,7 +29,7 @@ types.press = function(node, value, initial, delta_min, delta_max) {
 		if (value) return;
 
 		// set state on falling edge:
-		this.state = 0;
+		node.state = 0;
 		node.state_time = new Date()*1;
 
 	// state == off
@@ -41,11 +42,11 @@ types.press = function(node, value, initial, delta_min, delta_max) {
 		if (!value) return;
 
 		// set state on raising edge.
-		this.state = 1;
+		node.state = 1;
 		node.state_time = new Date()*1;
 	}
 
-	if (this.state === 0 && delta <= delta_max) {
+	if (node.state === 0 && delta <= delta_max) {
 		// todo: toggle:
 		var v = 1;
 		if (node.value) v = 0;
@@ -53,11 +54,14 @@ types.press = function(node, value, initial, delta_min, delta_max) {
 		node.publish(undefined, v);
 	}
 };
-types.longpress_time = function(node, value, initial) {
-	types.press(node, value, initial, 800, 0); 
+types.longpress_time = function(node, value, initial, config) {
+	types.press(node, value, initial, {
+		delta_min: 800
+	});
 };
-types.longpress = function(node, value, initial, delta_min, delta_max) {
-	if (typeof delta_min !== "number") delta_min = 1000;
+types.longpress = function(node, value, initial, config) {
+	var delta_min = 1000;
+	if (typeof config.delta_min === "number") delta_min = config.delta_min;
 
 	if (initial) {
 		return;
@@ -105,29 +109,35 @@ exports.init = function(node, app_config, main, host_info) {
 		invert = true;
 	}
 
+	node.announce([{
+		"type": "gpio.input.app",
+	}, app_config.metadata]);
+
+	var map = node.map(app_config, null, false, function(c) {
+		return c.type;
+	}, function(n, metadata, c) {
+		n.announce({
+			"type": c.type + ".input"
+		}, metadata);
+	});
+
 	// todo: map:
 	var set = function(value, initial) {
-		action.forEach(function(a) {
-			if (typeof types[a.type] !== "function")
+		node.publish(undefined, value);
+		types.forEach(function(a) {
+			if (typeof types[a] !== "function")
 				throw new Error("type not found: " + a.type);
-			var cb = types[a.type].bind(_this);
-			var n = node;
-			if (a.node) {
-				n = a.node;
+			var cb = types[a].bind(_this);
+			let n = map.node(a);
+			if (n) {
+				cb(n, value ^ invert, initial, n._config);
 			}
-			// TODO:
-			if (typeof n === "string") {
-				n = node.node(n);
-			}
-
-			cb(n, value ^ invert, initial);
 		});
 	};
 
-
 	gpio.on('change', function(channel, value) {
 		if (channel == pin) {
-			set(value, 0);
+			set(value, false);
 		}
 	});
 	gpio.setup(pin, gpio.DIR_IN, gpio.EDGE_BOTH, function(error) {
@@ -137,11 +147,11 @@ exports.init = function(node, app_config, main, host_info) {
 		gpio.read(pin, function(error, value) {
 			if (error)
 				return console.warn("Read Error: ", error);
-			set(value, 1);
+			set(value, true);
 		});
 	});
 
-	return [function() {
+	return [node, function() {
 		gpio.destroy();
 	}];
 };
