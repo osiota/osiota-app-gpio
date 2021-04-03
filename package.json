@@ -7,7 +7,7 @@
     "rpi-gpio-mod": "^0.7.0"
   },
   "devDependencies": {
-    "osiota-dev": "^1.2.1"
+    "osiota-dev": "^1.2.2"
   },
   "author": "Simon Walz and others",
   "license": "MIT",
