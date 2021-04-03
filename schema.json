@@ -42,8 +42,7 @@
 					}
 				},
 				"required": [
-					"type",
-					"node"
+					"type"
 				]
 			},
 			"examples": [
@@ -60,5 +59,6 @@
 			]
 		}
 	},
+	"required": [ "pin" ],
 	"additionalProperties": false
 }

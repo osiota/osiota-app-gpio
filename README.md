@@ -18,13 +18,13 @@ This application reads input states of GPIO pins.
 
 **Properties**
 
-|Name|Description|Type|
-|----|-----------|----|
-|`pin` (Pin number)|Not GPIO number ([See pin naming](https://www.npmjs.com/package/rpi-gpio#pin-naming))<br/>|number|
-|`invert` (Invert Input Value)|e.g. for a pull down circuit<br/>|boolean|
-|[`map`](#map) (Actions)||object\[\]|
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**pin**<br/>(Pin number)|`number`|Not GPIO number ([See pin naming](https://www.npmjs.com/package/rpi-gpio#pin-naming))<br/>|yes|
+|**invert**<br/>(Invert Input Value)|`boolean`|e.g. for a pull down circuit<br/>|no|
+|[**map**](#map)<br/>(Actions)|`object[]`||no|
 
-**Additional Properties:** `false`<br/>
+**Additional Properties:** not allowed<br/>
 **Example**
 
 ```json
@@ -51,12 +51,11 @@ This application reads input states of GPIO pins.
 
 **Item Properties**
 
-|Name|Description|Type|
-|----|-----------|----|
-|`type` (Switch Type)|Enum: `["switch","press","longpress"]`<br/>|string|
-|`node` (Node Name)||string|
+|Name|Type|Description|Required|
+|----|----|-----------|--------|
+|**type**<br/>(Switch Type)|`string`|Enum: `"switch"`, `"press"`, `"longpress"`<br/>|yes|
+|**node**<br/>(Node Name)|`string`||no|
 
-**Item Required Properties:** type,node<br/>
 **Example**
 
 ```json
