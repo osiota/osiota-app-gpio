@@ -6,6 +6,9 @@
   "dependencies": {
     "rpi-gpio": "^2.1.7"
   },
+  "overrides": {
+    "nan": "2.22.0"
+  },
   "devDependencies": {
     "osiota-dev": "^1.2.2"
   },
