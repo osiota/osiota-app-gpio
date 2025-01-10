@@ -1,4 +1,4 @@
-var gpio = require('rpi-gpio-mod');
+var gpio = require('rpi-gpio');
 
 var types = {};
 types.switch = function(node, value, initial, config) {
