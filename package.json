@@ -10,7 +10,7 @@
     "nan": "2.22.0"
   },
   "devDependencies": {
-    "osiota-dev": "^1.2.6"
+    "osiota-dev": "^1.2.7"
   },
   "author": "Simon Walz and others",
   "license": "MIT",
